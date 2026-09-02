@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- palette: dark-first ---- */
+  --color-bg: #0a0a0f;
+  --color-surface: #14141c;
+  --color-surface-2: #1c1c26;
+  --color-border: #26262f;
+  --color-text: #f4f4f5;
+  --color-muted: #8b8b96;
+  --color-accent: #22d3ee;
+  --color-accent-alt: #a78bfa;
+
+  /* inverted (light) sections */
+  --color-inverted: #f4f4f5;
+  --color-inverted-surface: #e6e6ea;
+  --color-inverted-border: #cfcfd6;
+  --color-ink: #0a0a0f;
+  --color-ink-muted: #55555f;
+
+  /* ---- type ---- */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --text-display-xl: clamp(3.5rem, 13vw, 12rem);
+  --text-display-xl--line-height: 0.86;
+  --text-display-xl--letter-spacing: -0.04em;
+
+  --text-display-lg: clamp(2.75rem, 8vw, 6.5rem);
+  --text-display-lg--line-height: 0.92;
+  --text-display-lg--letter-spacing: -0.035em;
+
+  --text-display-md: clamp(2rem, 5vw, 3.75rem);
+  --text-display-md--line-height: 1;
+  --text-display-md--letter-spacing: -0.03em;
+
+  --text-lead: clamp(1.0625rem, 1.6vw, 1.375rem);
+  --text-lead--line-height: 1.55;
+
+  /* ---- motion ---- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ---- layout ---- */
+  --spacing-gutter: clamp(1.25rem, 5vw, 5rem);
+}
+
+@layer base {
+  * {
+    /* every element opts into the token border colour */
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* No native smooth scroll: Lenis owns scrolling and the two fight. */
+    scroll-behavior: auto;
+  }
+
+  /* Lenis takes over scrolling; native smooth-scroll would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Custom cursor replaces the native one only where a fine pointer exists. */
+  @media (hover: hover) and (pointer: fine) {
+    body[data-custom-cursor="on"],
+    body[data-custom-cursor="on"] * {
+      cursor: none !important;
+    }
+  }
+}
+
+@layer components {
+  .gutter {
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .section-shell {
+    position: relative;
+    width: 100%;
+    padding-block: clamp(5rem, 12vh, 9rem);
+  }
+
+  /* Frosted panel used by cards and the About terminal. */
+  .glass {
+    background-color: color-mix(in oklab, var(--color-surface) 72%, transparent);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--color-border);
+  }
+
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-accent) 0%,
+    var(--color-accent-alt) 100%
+  );
+  background-clip: text;
+  color: transparent;
+}
+
+/* Anyone who asks for less motion gets a static, fully readable page. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pinned About sequence. The panels only stack on top of each other once the
+   scroll engine says so (data-stacked), so the plain document — and anyone on
+   prefers-reduced-motion — keeps all three panels in normal flow.
+   --------------------------------------------------------------------------- */
+[data-pin-panels][data-stacked="true"] {
+  position: relative;
+  min-height: 20rem;
+}
+
+[data-pin-panels][data-stacked="true"] > [data-pin-panel] {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  translate: 0 -50%;
+  will-change: opacity, transform;
+}
+
+@keyframes preload {
+  0% {
+    transform: scaleX(0);
+  }
+  60% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
