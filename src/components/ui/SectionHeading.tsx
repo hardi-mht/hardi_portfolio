@@ -23,7 +23,9 @@ export function SectionHeading({
         className="flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.18em] uppercase"
         style={{ color: inverted ? "var(--color-ink-muted)" : "var(--color-muted)" }}
       >
-        <span className="text-accent">{index}</span>
+        <span className={inverted ? "text-accent-ink" : "text-accent"}>
+          {index}
+        </span>
         <span
           aria-hidden
           className="h-px w-8"

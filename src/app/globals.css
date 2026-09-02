@@ -10,6 +10,8 @@
   --color-muted: #8b8b96;
   --color-accent: #22d3ee;
   --color-accent-alt: #a78bfa;
+  /* Darker accent for the light sections: cyan-400 on #f4f4f5 is ~1.9:1. */
+  --color-accent-ink: #0e7490;
 
   /* inverted (light) sections */
   --color-inverted: #f4f4f5;

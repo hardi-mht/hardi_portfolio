@@ -51,7 +51,7 @@ export function Nav() {
       <a
         href="#hero"
         data-cursor="hover"
-        aria-label={`${profile.name} — back to top`}
+        aria-label={`${profile.initials} — ${profile.name}, back to top`}
         className="font-mono text-sm font-bold tracking-[0.18em] text-text"
       >
         {profile.initials}

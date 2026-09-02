@@ -25,11 +25,11 @@ export function About() {
         >
           {/* Left rail: the running summary, always visible. */}
           <div data-pin-rail>
-            <p className="text-display-md font-bold text-balance">
+            <h2 className="text-display-md font-bold text-balance">
               Senior engineer,
               <br />
               <span className="text-gradient">agentic systems.</span>
-            </p>
+            </h2>
             <p className="mt-6 max-w-md text-lead text-muted text-pretty">
               {profile.summary}
             </p>
