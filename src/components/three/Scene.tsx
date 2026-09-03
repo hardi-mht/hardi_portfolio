@@ -6,6 +6,7 @@ import { AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
 import * as THREE from "three";
 import { NodeField } from "./NodeField";
 import { CubeCluster } from "./CubeCluster";
+import { DeskScene } from "./DeskScene";
 import { useScrollProgress } from "./useScrollProgress";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -37,7 +38,7 @@ function CameraRig({ progress }: { progress: React.RefObject<number> }) {
     );
     camera.position.z = THREE.MathUtils.lerp(
       camera.position.z,
-      9 - progress.current * 2.2,
+      9 - progress.current * 0.9,
       damp,
     );
     camera.lookAt(0, 0, -2);
@@ -72,7 +73,7 @@ export default function Scene() {
       className="pointer-events-none fixed inset-0 -z-10 opacity-70"
     >
       {/* Scrim: keeps the headline and body copy legible over the field. */}
-      <div className="absolute inset-0 z-10 bg-linear-to-r from-bg via-bg/75 to-transparent to-75%" />
+      <div className="absolute inset-0 z-10 bg-linear-to-r from-bg from-20% via-bg/55 to-transparent to-58%" />
       <div className="absolute inset-x-0 bottom-0 z-10 h-40 bg-linear-to-t from-bg to-transparent" />
       <Canvas
         dpr={[1, 1.75]}
@@ -80,7 +81,9 @@ export default function Scene() {
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       >
         <CameraRig progress={progress} />
+        <ambientLight intensity={0.45} />
         <NodeField count={count} progress={progress} />
+        <DeskScene progress={progress} />
         <CubeCluster progress={progress} />
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />

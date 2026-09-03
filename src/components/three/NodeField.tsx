@@ -61,7 +61,7 @@ export function NodeField({
     const color = new THREE.Color();
 
     for (let i = 0; i < count; i++) {
-      scatter[i * 3] = (Math.random() - 0.5) * 16;
+      scatter[i * 3] = (Math.random() - 0.5) * 12;
       scatter[i * 3 + 1] = (Math.random() - 0.5) * 10;
       scatter[i * 3 + 2] = (Math.random() - 0.5) * 10 - 2;
 
@@ -158,7 +158,9 @@ export function NodeField({
   });
 
   return (
-    <group>
+    // Biased left so the field sits behind the headline rather than across
+    // the right-hand lane where the workstation lives.
+    <group position={[-2.6, 0, -1.5]}>
       <points ref={points}>
         <bufferGeometry>
           <bufferAttribute

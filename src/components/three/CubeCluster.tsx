@@ -8,7 +8,7 @@ const dummy = new THREE.Object3D();
 
 /** Slow-drifting wireframe boxes; ambient depth, never the focal point. */
 export function CubeCluster({
-  count = 22,
+  count = 12,
   progress,
 }: {
   count?: number;
@@ -20,9 +20,9 @@ export function CubeCluster({
     () =>
       Array.from({ length: count }, () => ({
         position: new THREE.Vector3(
-          (Math.random() - 0.5) * 18,
-          (Math.random() - 0.5) * 11,
-          (Math.random() - 0.5) * 8 - 3,
+          (Math.random() - 0.5) * 11 - 2.5,
+          (Math.random() - 0.5) * 10,
+          (Math.random() - 0.5) * 7 - 5,
         ),
         rotation: new THREE.Vector3(
           Math.random() * Math.PI,

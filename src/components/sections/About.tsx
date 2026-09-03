@@ -19,42 +19,42 @@ export function About() {
           <span>About</span>
         </div>
 
+        {/* Copy stays in the left lane; the right lane belongs to the 3D
+            workstation, where she stands and turns to face the reader. */}
         <div
           data-pin-stage
-          className="mt-10 grid gap-8 md:mt-14 md:min-h-[70svh] md:grid-cols-[1fr_1.15fr] md:items-center md:gap-16"
+          className="mt-10 md:mt-14 md:flex md:min-h-[70svh] md:items-center"
         >
-          {/* Left rail: the running summary, always visible. */}
-          <div data-pin-rail>
+          <div className="w-full md:max-w-[48%]">
             <h2 className="text-display-md font-bold text-balance">
               Senior engineer,
               <br />
               <span className="text-gradient">agentic systems.</span>
             </h2>
-            <p className="mt-6 max-w-md text-lead text-muted text-pretty">
+            <p className="mt-6 text-lead text-muted text-pretty">
               {profile.summary}
             </p>
-          </div>
 
-          {/* Right: the three panels the pin sequence steps through. */}
-          <ol data-pin-panels className="space-y-5 md:space-y-6">
-            {profile.aboutPanels.map((panel, i) => (
-              <li
-                key={panel.label}
-                data-pin-panel={i}
-                className="glass rounded-2xl p-6 md:p-8"
-              >
-                <p className="font-mono text-[0.6875rem] tracking-[0.18em] text-accent uppercase">
-                  {panel.label}
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold text-balance md:text-3xl">
-                  {panel.heading}
-                </h3>
-                <p className="mt-3 font-mono text-sm leading-relaxed text-muted text-pretty">
-                  {panel.body}
-                </p>
-              </li>
-            ))}
-          </ol>
+            <ol data-pin-panels className="mt-10 space-y-5 md:space-y-6">
+              {profile.aboutPanels.map((panel, i) => (
+                <li
+                  key={panel.label}
+                  data-pin-panel={i}
+                  className="glass rounded-2xl p-6 md:p-8"
+                >
+                  <p className="font-mono text-[0.6875rem] tracking-[0.18em] text-accent uppercase">
+                    {panel.label}
+                  </p>
+                  <h3 className="mt-4 text-2xl font-semibold text-balance md:text-3xl">
+                    {panel.heading}
+                  </h3>
+                  <p className="mt-3 font-mono text-sm leading-relaxed text-muted text-pretty">
+                    {panel.body}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>
