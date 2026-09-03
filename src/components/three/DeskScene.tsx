@@ -3,7 +3,7 @@
 import { useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { Figure } from "./Figure";
+import { Character } from "./Character";
 import { Workstation } from "./Workstation";
 
 /**
@@ -41,7 +41,7 @@ export function DeskScene({ progress }: { progress: RefObject<number> }) {
 
   return (
     <group ref={group} position={[laneX, -2.15, 0]} scale={1.28}>
-      <Figure progress={progress} />
+      <Character progress={progress} />
       <Workstation progress={progress} />
 
       {/* Two rims carve her silhouette out of the background; the monitor

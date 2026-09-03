@@ -50,6 +50,27 @@ node tools/shot.mjs http://localhost:3000 ./shots 1440 900
 `SCROLL=0,900,2000` adds viewport captures at those offsets;
 `REDUCED_MOTION=1` renders the page as a reduced-motion visitor sees it.
 
+## The character
+
+The hero shows a figure working at a desk who stands and turns toward the
+reader as you scroll into About. Two implementations share one rig:
+
+- `public/models/avatar.glb` — a rigged full-body GLB (built for a **Ready
+  Player Me** export). Used whenever the file is present.
+- `src/components/three/Figure.tsx` — a stand-in built from primitives, used
+  when it is not.
+
+`next.config.ts` checks for the file at build time and sets
+`NEXT_PUBLIC_HAS_AVATAR`, so no model request is made when there is no model.
+**Adding the file needs a dev-server restart.**
+
+No animation clips are involved. `src/components/three/poses.ts` holds a seated
+and a standing pose as rest-relative bone rotations, and scroll progress slerps
+between them. Rig naming is Mixamo-style (`Hips`, `Spine`, `LeftArm`,
+`LeftForeArm`, `LeftUpLeg`, `LeftLeg`, `Head`, …); a `mixamorig:` prefix is
+stripped automatically. Expect to tune the arm and leg axes in `poses.ts` once
+a real rig is in place — sign conventions differ between exporters.
+
 ## Still to add
 
 - `public/audio/ambient.mp3` — a royalty-free loop. Until it exists the sound
@@ -59,3 +80,5 @@ node tools/shot.mjs http://localhost:3000 ./shots 1440 900
   Cards omit their link row while `links` is empty.
 - The production domain, currently `https://hardimehta.dev` in
   `src/app/layout.tsx`, `sitemap.ts` and `robots.ts`.
+- `public/models/avatar.glb` — see **The character** above. Without it the
+  scene falls back to the coded stand-in.
