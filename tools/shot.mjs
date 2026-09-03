@@ -28,7 +28,10 @@ mkdirSync(outDir, { recursive: true });
 
 const chrome = spawn(CHROME, [
   "--headless=new",
-  "--disable-gpu",
+  // Real GPU, not SwiftShader: the scene's capability gate rejects software
+  // rasterisers, so a software-rendered run would screenshot an empty scene.
+  "--use-angle=default",
+  "--enable-unsafe-swiftshader",
   "--hide-scrollbars",
   "--no-first-run",
   "--no-default-browser-check",
@@ -84,6 +87,13 @@ await call("Emulation.setDeviceMetricsOverride", {
   deviceScaleFactor: 1,
   mobile: width < 768,
 });
+
+// THEME=light|dark emulates that OS colour-scheme preference.
+if (process.env.THEME) {
+  await call("Emulation.setEmulatedMedia", {
+    features: [{ name: "prefers-color-scheme", value: process.env.THEME }],
+  });
+}
 
 // REDUCED_MOTION=1 renders the page as a prefers-reduced-motion visitor sees it.
 if (process.env.REDUCED_MOTION) {

@@ -3,6 +3,7 @@
 import { Component, Suspense, type ReactNode, type RefObject } from "react";
 import { Figure } from "./Figure";
 import { AvatarFigure } from "./AvatarFigure";
+import type { ScenePalette } from "./palette";
 
 /** Set by next.config.ts from whether public/models/avatar.glb exists. */
 const HAS_AVATAR = Boolean(process.env.NEXT_PUBLIC_HAS_AVATAR);
@@ -38,8 +39,14 @@ class AvatarBoundary extends Component<
  *
  * Note: adding the model requires a dev-server restart to be picked up.
  */
-export function Character({ progress }: { progress: RefObject<number> }) {
-  const fallback = <Figure progress={progress} />;
+export function Character({
+  progress,
+  palette,
+}: {
+  progress: RefObject<number>;
+  palette: ScenePalette;
+}) {
+  const fallback = <Figure progress={progress} palette={palette} />;
   if (!HAS_AVATAR) return fallback;
 
   return (

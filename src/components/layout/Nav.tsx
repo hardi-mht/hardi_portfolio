@@ -83,7 +83,7 @@ export function Nav() {
       <a
         href="#contact"
         data-cursor="hover"
-        className="rounded-full bg-accent px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-bg uppercase transition-opacity hover:opacity-90"
+        className="rounded-full bg-accent px-4 py-2 font-mono text-[0.6875rem] font-bold tracking-[0.14em] text-on-accent uppercase transition-opacity hover:opacity-90"
       >
         Get in touch
       </a>

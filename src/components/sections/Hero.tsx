@@ -34,7 +34,7 @@ export function Hero() {
           data-reveal="rise"
           className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3"
         >
-          <span className="inline-flex items-center rounded-md bg-accent px-3 py-1.5 font-mono text-xs font-bold tracking-[0.2em] text-bg uppercase">
+          <span className="inline-flex items-center rounded-md bg-accent px-3 py-1.5 font-mono text-xs font-bold tracking-[0.2em] text-on-accent uppercase">
             {profile.title}
           </span>
           <span className="font-mono text-xs tracking-[0.14em] text-muted uppercase">

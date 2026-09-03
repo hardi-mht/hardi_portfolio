@@ -41,7 +41,7 @@ export function Skills() {
                       className={cn(
                         "rounded-md border px-2.5 py-1 font-mono text-xs",
                         group.primary
-                          ? "border-white/15 bg-white/5 text-inverted"
+                          ? "border-overlay-border bg-overlay text-inverted"
                           : "border-inverted-border bg-inverted-surface text-ink-muted",
                       )}
                     >

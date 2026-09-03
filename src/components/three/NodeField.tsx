@@ -4,8 +4,7 @@ import { useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-const ACCENT = new THREE.Color("#22d3ee");
-const ACCENT_ALT = new THREE.Color("#a78bfa");
+import type { ScenePalette } from "./palette";
 
 const vertexShader = /* glsl */ `
   attribute vec3 aColor;
@@ -39,15 +38,22 @@ const fragmentShader = /* glsl */ `
 export function NodeField({
   count,
   progress,
+  palette,
 }: {
   count: number;
   progress: RefObject<number>;
+  palette: ScenePalette;
 }) {
   const points = useRef<THREE.Points>(null);
   const lines = useRef<THREE.LineSegments>(null);
-  const uniforms = useMemo(() => ({ uOpacity: { value: 0.85 } }), []);
+  const uniforms = useMemo(
+    () => ({ uOpacity: { value: palette.pointOpacity } }),
+    [palette.pointOpacity],
+  );
 
   const data = useMemo(() => {
+    const nodeColor = new THREE.Color(palette.node);
+    const nodeAltColor = new THREE.Color(palette.nodeAlt);
     const scatter = new Float32Array(count * 3);
     const lattice = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
@@ -72,7 +78,7 @@ export function NodeField({
       lattice[i * 3 + 1] = y * spacing - offset;
       lattice[i * 3 + 2] = z * spacing - offset - 2;
 
-      color.copy(ACCENT).lerp(ACCENT_ALT, Math.random());
+      color.copy(nodeColor).lerp(nodeAltColor, Math.random());
       colors[i * 3] = color.r;
       colors[i * 3 + 1] = color.g;
       colors[i * 3 + 2] = color.b;
@@ -107,7 +113,7 @@ export function NodeField({
       live: new Float32Array(count * 3),
       linePositions: new Float32Array((pairs.length / 2) * 6),
     };
-  }, [count]);
+  }, [count, palette.node, palette.nodeAlt]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
@@ -153,8 +159,8 @@ export function NodeField({
       attr.needsUpdate = true;
     }
     const lineMat = lines.current?.material as THREE.LineBasicMaterial | undefined;
-    if (lineMat) lineMat.opacity = 0.13 * (1 - p) + 0.025;
-    uniforms.uOpacity.value = 0.85 - p * 0.55;
+    if (lineMat) lineMat.opacity = palette.lineOpacity * (1 - p) + 0.025;
+    uniforms.uOpacity.value = palette.pointOpacity * (1 - p * 0.65);
   });
 
   return (
@@ -176,7 +182,9 @@ export function NodeField({
           uniforms={uniforms}
           transparent
           depthWrite={false}
-          blending={THREE.AdditiveBlending}
+          blending={
+            palette.additive ? THREE.AdditiveBlending : THREE.NormalBlending
+          }
         />
       </points>
 
@@ -188,9 +196,9 @@ export function NodeField({
           />
         </bufferGeometry>
         <lineBasicMaterial
-          color={ACCENT}
+          color={palette.line}
           transparent
-          opacity={0.13}
+          opacity={palette.lineOpacity}
           depthWrite={false}
         />
       </lineSegments>

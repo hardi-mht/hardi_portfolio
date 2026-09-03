@@ -35,7 +35,7 @@ export function SoundToggle() {
       onClick={toggle}
       aria-pressed={enabled}
       aria-label={enabled ? "Turn sound off" : "Turn sound on"}
-      className="fixed right-[var(--spacing-gutter)] bottom-8 z-50 grid size-11 place-items-center rounded-full border border-border bg-surface/80 text-muted backdrop-blur-xl transition-colors hover:border-accent/50 hover:text-accent"
+      className="grid size-11 place-items-center rounded-full border border-border bg-surface/80 text-muted backdrop-blur-xl transition-colors hover:border-accent/50 hover:text-accent"
     >
       {enabled ? (
         <Volume2 aria-hidden className="size-4" />

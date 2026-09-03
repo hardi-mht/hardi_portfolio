@@ -5,7 +5,7 @@ import { ScrollProvider } from "@/components/layout/ScrollProvider";
 import { Nav } from "@/components/layout/Nav";
 import { Preloader } from "@/components/layout/Preloader";
 import { CustomCursor } from "@/components/layout/CustomCursor";
-import { SoundToggle } from "@/components/layout/SoundToggle";
+import { ControlDock } from "@/components/layout/ControlDock";
 import { SceneMount } from "@/components/three/SceneMount";
 import "./globals.css";
 
@@ -64,15 +64,27 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0f",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f4f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0f" },
+  ],
+  colorScheme: "light dark",
 };
+
+/**
+ * Applies a stored theme choice before first paint. Without this the page
+ * renders in the system theme and then snaps to the chosen one.
+ */
+const themeScript = `(function(){try{var t=localStorage.getItem("hm-theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t}}catch(e){}})()`;
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <Preloader />
         <SceneMount />
@@ -80,7 +92,7 @@ export default function RootLayout({
         <CustomCursor />
         <Nav />
         {children}
-        <SoundToggle />
+        <ControlDock />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { AdaptiveDpr, AdaptiveEvents } from "@react-three/drei";
 import * as THREE from "three";
@@ -8,7 +8,8 @@ import { NodeField } from "./NodeField";
 import { CubeCluster } from "./CubeCluster";
 import { DeskScene } from "./DeskScene";
 import { useScrollProgress } from "./useScrollProgress";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useTheme } from "@/hooks/useTheme";
+import { PALETTES } from "./palette";
 
 /** Damped pointer parallax plus a small scroll dolly. */
 function CameraRig({ progress }: { progress: React.RefObject<number> }) {
@@ -48,43 +49,39 @@ function CameraRig({ progress }: { progress: React.RefObject<number> }) {
 }
 
 /**
- * Fixed WebGL backdrop. It is decorative, so it is skipped entirely for
- * reduced-motion users and for devices unlikely to hold a frame rate — the
- * page is designed to look finished without it.
+ * Fixed WebGL backdrop. Purely decorative: SceneMount decides whether this
+ * chunk loads at all, and the page is designed to look finished without it.
  */
 export default function Scene() {
   const progress = useScrollProgress();
-  const reduced = useReducedMotion();
-  const [capable, setCapable] = useState<boolean | null>(null);
+  const { resolved, ready } = useTheme();
+  const palette = PALETTES[resolved];
 
-  useEffect(() => {
-    const cores = navigator.hardwareConcurrency ?? 4;
-    const coarse = window.matchMedia("(pointer: coarse)").matches;
-    setCapable(cores > 4 && !(coarse && cores <= 6));
-  }, []);
-
-  if (reduced || capable !== true) return null;
+  // Waiting for `ready` avoids building the scene with the wrong palette and
+  // then rebuilding every material a frame later.
+  if (!ready) return null;
 
   const count = window.innerWidth < 768 ? 260 : 520;
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 opacity-70"
+      className="pointer-events-none fixed inset-0 -z-10"
+      style={{ opacity: palette.canvasOpacity }}
     >
       {/* Scrim: keeps the headline and body copy legible over the field. */}
       <div className="absolute inset-0 z-10 bg-linear-to-r from-bg from-20% via-bg/55 to-transparent to-58%" />
       <div className="absolute inset-x-0 bottom-0 z-10 h-40 bg-linear-to-t from-bg to-transparent" />
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={[1, 1.5]}
         camera={{ position: [0, 0, 9], fov: 45 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       >
         <CameraRig progress={progress} />
-        <ambientLight intensity={0.45} />
-        <NodeField count={count} progress={progress} />
-        <DeskScene progress={progress} />
-        <CubeCluster progress={progress} />
+        <ambientLight intensity={palette.ambient} />
+        <NodeField count={count} progress={progress} palette={palette} />
+        <DeskScene progress={progress} palette={palette} />
+        <CubeCluster progress={progress} palette={palette} />
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
       </Canvas>

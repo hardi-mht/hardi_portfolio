@@ -3,6 +3,7 @@
 import { useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import type { ScenePalette } from "./palette";
 
 const dummy = new THREE.Object3D();
 
@@ -10,9 +11,11 @@ const dummy = new THREE.Object3D();
 export function CubeCluster({
   count = 12,
   progress,
+  palette,
 }: {
   count?: number;
   progress: RefObject<number>;
+  palette: ScenePalette;
 }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
 
@@ -56,17 +59,17 @@ export function CubeCluster({
     mesh.current.instanceMatrix.needsUpdate = true;
 
     const material = mesh.current.material as THREE.MeshBasicMaterial;
-    material.opacity = 0.22 * (1 - p * 0.7);
+    material.opacity = palette.cubeOpacity * (1 - p * 0.7);
   });
 
   return (
     <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
       <boxGeometry args={[1, 1, 1]} />
       <meshBasicMaterial
-        color="#a78bfa"
+        color={palette.cube}
         wireframe
         transparent
-        opacity={0.22}
+        opacity={palette.cubeOpacity}
         depthWrite={false}
       />
     </instancedMesh>

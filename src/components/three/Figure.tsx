@@ -4,17 +4,21 @@ import { useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { SITTING, STANDING, POSE_KEYS, type Pose } from "./poses";
+import type { ScenePalette } from "./palette";
 
-const SKIN = "#7d7490";
-const HAIR = "#2a2436";
-const CLOTH = "#4a4560";
 
 /**
  * A stylised figure rigged in code: nested groups act as joints, and scroll
  * progress lerps every joint between the two poses in `poses.ts`. Lit mostly
  * by the monitor, so it reads as a silhouette at a desk rather than a portrait.
  */
-export function Figure({ progress }: { progress: RefObject<number> }) {
+export function Figure({
+  progress,
+  palette,
+}: {
+  progress: RefObject<number>;
+  palette: ScenePalette;
+}) {
   const root = useRef<THREE.Group>(null);
   const hips = useRef<THREE.Group>(null);
   const torso = useRef<THREE.Group>(null);
@@ -32,11 +36,13 @@ export function Figure({ progress }: { progress: RefObject<number> }) {
 
   const materials = useMemo(
     () => ({
-      skin: new THREE.MeshStandardMaterial({ color: SKIN, roughness: 0.75, metalness: 0.05 }),
-      hair: new THREE.MeshStandardMaterial({ color: HAIR, roughness: 0.9 }),
-      cloth: new THREE.MeshStandardMaterial({ color: CLOTH, roughness: 0.85 }),
+      skin: new THREE.MeshLambertMaterial({
+        color: palette.skin,
+      }),
+      hair: new THREE.MeshLambertMaterial({ color: palette.hair }),
+      cloth: new THREE.MeshLambertMaterial({ color: palette.cloth }),
     }),
-    [],
+    [palette.skin, palette.hair, palette.cloth],
   );
 
   useFrame((state) => {

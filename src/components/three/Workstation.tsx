@@ -3,12 +3,17 @@
 import { useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import type { ScenePalette } from "./palette";
 
-const FRAME = "#1a1a24";
-const SURFACE = "#23232f";
 
 /** Desk, chair and a monitor whose screen is the scene's main light source. */
-export function Workstation({ progress }: { progress: RefObject<number> }) {
+export function Workstation({
+  progress,
+  palette,
+}: {
+  progress: RefObject<number>;
+  palette: ScenePalette;
+}) {
   const chair = useRef<THREE.Group>(null);
   const screen = useRef<THREE.MeshBasicMaterial>(null);
   const glow = useRef<THREE.PointLight>(null);
@@ -27,10 +32,14 @@ export function Workstation({ progress }: { progress: RefObject<number> }) {
 
   const materials = useMemo(
     () => ({
-      frame: new THREE.MeshStandardMaterial({ color: FRAME, roughness: 0.7, metalness: 0.25 }),
-      surface: new THREE.MeshStandardMaterial({ color: SURFACE, roughness: 0.6, metalness: 0.15 }),
+      frame: new THREE.MeshLambertMaterial({
+        color: palette.deskFrame,
+      }),
+      surface: new THREE.MeshLambertMaterial({
+        color: palette.deskSurface,
+      }),
     }),
-    [],
+    [palette.deskFrame, palette.deskSurface],
   );
 
   useFrame((state) => {
@@ -79,7 +88,7 @@ export function Workstation({ progress }: { progress: RefObject<number> }) {
             We sit behind her shoulder, so this is read over her back. */}
         <mesh position={[0, 0.55, 0.019]}>
           <planeGeometry args={[0.86, 0.49]} />
-          <meshBasicMaterial ref={screen} color="#0d2b33" transparent opacity={0.9} />
+          <meshBasicMaterial ref={screen} color={palette.screen} transparent opacity={0.9} />
         </mesh>
         {codeLines.map((line, i) => (
           <mesh
@@ -127,7 +136,11 @@ export function Workstation({ progress }: { progress: RefObject<number> }) {
       {/* ---- floor catch: a faint disc so she is not floating in the void ---- */}
       <mesh position={[0, 0.002, -0.2]} rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[1.7, 48]} />
-        <meshBasicMaterial color="#22d3ee" transparent opacity={0.045} />
+        <meshBasicMaterial
+          color={palette.node}
+          transparent
+          opacity={palette.floorOpacity}
+        />
       </mesh>
     </group>
   );

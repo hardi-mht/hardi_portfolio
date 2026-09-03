@@ -27,7 +27,7 @@ export function Contact() {
           <a
             href={`mailto:${profile.email}`}
             data-cursor="hover"
-            className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs font-bold tracking-[0.14em] text-bg uppercase transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs font-bold tracking-[0.14em] text-on-accent uppercase transition-opacity hover:opacity-90"
           >
             <Mail aria-hidden className="size-4" />
             {profile.email}

@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* ---- palette: dark-first ---- */
+  /* ---------------------------------------------------------------------
+     Two palette groups, not two themes.
+
+       base      — bg / surface / border / text / muted / accent
+       inverted  — the alternating sections (Experience, Skills) and the text
+                   on them: inverted / inverted-surface / ink / ink-muted
+
+     Switching theme swaps the two groups wholesale, so every section keeps
+     its inversion rhythm and no component needs a light-mode variant.
+     Declared here as dark; overridden further down for light.
+     --------------------------------------------------------------------- */
   --color-bg: #0a0a0f;
   --color-surface: #14141c;
   --color-surface-2: #1c1c26;
@@ -10,10 +20,14 @@
   --color-muted: #8b8b96;
   --color-accent: #22d3ee;
   --color-accent-alt: #a78bfa;
-  /* Darker accent for the light sections: cyan-400 on #f4f4f5 is ~1.9:1. */
+  /* Text/icons sitting on a filled accent block. */
+  --color-on-accent: #0a0a0f;
+  /* The accent as used on an inverted section. */
   --color-accent-ink: #0e7490;
+  /* A wash that reads as "slightly lighter/darker than the ink surface". */
+  --color-overlay: rgb(255 255 255 / 0.05);
+  --color-overlay-border: rgb(255 255 255 / 0.15);
 
-  /* inverted (light) sections */
   --color-inverted: #f4f4f5;
   --color-inverted-surface: #e6e6ea;
   --color-inverted-border: #cfcfd6;
@@ -44,6 +58,70 @@
 
   /* ---- layout ---- */
   --spacing-gutter: clamp(1.25rem, 5vw, 5rem);
+}
+
+/* ---------------------------------------------------------------------------
+   Light theme.
+
+   Three states: no `data-theme` follows the system, `data-theme="light"` and
+   `data-theme="dark"` are explicit choices. The light values are the dark ones
+   with the base and inverted groups swapped, so alternating sections still
+   alternate — they just start from the other end.
+
+   Accent values are not mirrored: #22d3ee on #f4f4f5 is 1.9:1, so light mode
+   uses cyan-800 / violet-700. Cyan-700 was tried first and failed — at 10%
+   tint behind accent-coloured text it lands at 4.27:1.
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+
+    --color-bg: #f4f4f5;
+    --color-surface: #ffffff;
+    --color-surface-2: #e9e9ee;
+    --color-border: #d8d8df;
+    --color-text: #0f0f14;
+    --color-muted: #55555f;
+    --color-accent: #155e75;
+    --color-accent-alt: #6d28d9;
+    --color-on-accent: #ffffff;
+    --color-accent-ink: #22d3ee;
+    --color-overlay: rgb(0 0 0 / 0.04);
+    --color-overlay-border: rgb(0 0 0 / 0.12);
+
+    --color-inverted: #0a0a0f;
+    --color-inverted-surface: #14141c;
+    --color-inverted-border: #26262f;
+    --color-ink: #f4f4f5;
+    --color-ink-muted: #8b8b96;
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --color-bg: #f4f4f5;
+  --color-surface: #ffffff;
+  --color-surface-2: #e9e9ee;
+  --color-border: #d8d8df;
+  --color-text: #0f0f14;
+  --color-muted: #55555f;
+  --color-accent: #155e75;
+  --color-accent-alt: #6d28d9;
+  --color-on-accent: #ffffff;
+  --color-accent-ink: #22d3ee;
+  --color-overlay: rgb(0 0 0 / 0.04);
+  --color-overlay-border: rgb(0 0 0 / 0.12);
+
+  --color-inverted: #0a0a0f;
+  --color-inverted-surface: #14141c;
+  --color-inverted-border: #26262f;
+  --color-ink: #f4f4f5;
+  --color-ink-muted: #8b8b96;
 }
 
 @layer base {
