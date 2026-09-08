@@ -20,14 +20,22 @@ export function Clara() {
   return (
     <section id="clara" className="section-shell gutter">
       <div className="mx-auto max-w-6xl">
+        {/* Leads with the work, not the product name — Clara is a module of
+            AppVentory's product, and the heading should not imply otherwise. */}
         <SectionHeading
           index="03"
-          label="Case study"
+          label="Case study — AppVentory"
           title={
             <>
-              Clara: from a fixed pipeline
-              <br className="hidden sm:block" /> to an{" "}
+              Re-architecting a fixed pipeline
+              <br className="hidden sm:block" /> into an{" "}
               <span className="text-gradient">agent</span>.
+            </>
+          }
+          context={
+            <>
+              Clara — AppVentory&rsquo;s in-product AI assistant.{" "}
+              <span className="text-accent">{featuredProject.role}</span>.
             </>
           }
           intro={featuredProject.problem}
@@ -101,8 +109,6 @@ export function Clara() {
           <div>
             <p className="mono-label">What I did</p>
             <p className="mt-3 font-mono text-xs text-muted">
-              {featuredProject.role}
-              <br />
               {featuredProject.context}
             </p>
           </div>

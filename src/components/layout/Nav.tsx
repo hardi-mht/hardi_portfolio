@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 import { cn } from "@/lib/cn";
 
+/**
+ * Clara is deliberately absent: it is work done inside the AppVentory role,
+ * not a thing of its own, and a menu entry alongside About/Projects would read
+ * as a product owned outright. Its section still scrolls past in place, and
+ * the spy leaves "Experience" lit while you are in it — which is accurate.
+ */
 const links = [
   { id: "about", label: "About" },
   { id: "experience", label: "Experience" },
-  { id: "clara", label: "Clara" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
 ];

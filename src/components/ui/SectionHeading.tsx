@@ -4,6 +4,8 @@ type SectionHeadingProps = {
   index: string;
   label: string;
   title: React.ReactNode;
+  /** Short mono line under the title — used to attribute work to where it happened. */
+  context?: React.ReactNode;
   intro?: React.ReactNode;
   inverted?: boolean;
   className?: string;
@@ -13,6 +15,7 @@ export function SectionHeading({
   index,
   label,
   title,
+  context,
   intro,
   inverted = false,
   className,
@@ -44,6 +47,15 @@ export function SectionHeading({
       >
         {title}
       </h2>
+
+      {context ? (
+        <p
+          className="mt-4 font-mono text-sm"
+          style={{ color: inverted ? "var(--color-ink-muted)" : "var(--color-muted)" }}
+        >
+          {context}
+        </p>
+      ) : null}
 
       {intro ? (
         <p
