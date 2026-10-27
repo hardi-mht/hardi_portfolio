@@ -7,11 +7,21 @@ const STORAGE_KEY = "hm-sound";
 const AMBIENT_SRC = "/audio/ambient.mp3";
 
 /**
+ * Whether the ambient file actually exists, decided at build time in
+ * next.config.ts — the same trick the optional avatar model uses.
+ *
+ * Howler stays silent when a source 404s, so the toggle always worked. It
+ * just asked the server for a missing file first and left a pair of 404s in
+ * the console every time, which makes a real error harder to spot.
+ */
+const HAS_AMBIENT = Boolean(process.env.NEXT_PUBLIC_HAS_AMBIENT);
+
+/**
  * Sound is off until the visitor asks for it, and the choice persists.
  *
  * UI ticks are synthesised with the Web Audio API so they need no asset. The
- * ambient loop is an optional file: if `/audio/ambient.mp3` is absent the
- * toggle still works and simply has nothing to loop.
+ * ambient loop is optional: drop a file at `public/audio/ambient.mp3` and it
+ * starts looping, leave it out and the toggle controls the ticks alone.
  */
 export function useSound() {
   const [enabled, setEnabled] = useState(false);
@@ -42,6 +52,8 @@ export function useSound() {
       ambient.current?.pause();
       return;
     }
+
+    if (!HAS_AMBIENT) return;
 
     let cancelled = false;
     // Howler only loads once someone actually turns sound on.

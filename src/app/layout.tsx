@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono, Inter } from "next/font/google";
 import { profile } from "@/content/profile";
 import { ScrollProvider } from "@/components/layout/ScrollProvider";
 import { Nav } from "@/components/layout/Nav";
 import { Preloader } from "@/components/layout/Preloader";
 import { CustomCursor } from "@/components/layout/CustomCursor";
 import { ControlDock } from "@/components/layout/ControlDock";
-import { SceneMount } from "@/components/three/SceneMount";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -14,6 +13,18 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
+});
+
+/**
+ * Body text only. Space Grotesk is a display face — its tight apertures and
+ * characterful g and y earn their keep in a headline and work against you in
+ * a paragraph. Inter was drawn for small sizes and gets out of the way.
+ */
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -25,7 +36,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 const siteUrl = "https://hardimehta.dev";
 const description =
-  "Senior Software Engineer with 5+ years building and scaling web applications with React, Node.js and the MERN stack — now architecting agentic AI systems with LLM tool-calling and RAG.";
+  "Web developer with 5+ years building and scaling applications with React, Node.js and the MERN stack — SaaS platforms, REST APIs and AWS infrastructure. Available for contract, freelance and full-time work.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -81,13 +92,18 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    // The theme script sets data-theme before React hydrates, so the server
+    // HTML and the client tree differ on <html> by design.
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         <Preloader />
-        <SceneMount />
         <ScrollProvider />
         <CustomCursor />
         <Nav />

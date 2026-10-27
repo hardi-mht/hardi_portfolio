@@ -3,7 +3,7 @@ import { cn } from "@/lib/cn";
 type ChipProps = {
   children: React.ReactNode;
   className?: string;
-  tone?: "default" | "accent" | "inverted";
+  tone?: "default" | "accent";
   /** Keep the label's own casing — "ReAct" must not read as "REACT". */
   preserveCase?: boolean;
 };
@@ -21,8 +21,6 @@ export function Chip({
         preserveCase ? "normal-case" : "uppercase",
         tone === "default" && "border-border bg-surface text-muted",
         tone === "accent" && "border-accent/40 bg-accent/10 text-accent",
-        tone === "inverted" &&
-          "border-inverted-border bg-inverted-surface text-ink-muted",
         className,
       )}
     >

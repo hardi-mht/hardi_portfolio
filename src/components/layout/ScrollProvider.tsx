@@ -27,23 +27,60 @@ export function ScrollProvider() {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // Anchor links go through Lenis so they land in the right place.
+    /**
+     * Anchor links go through Lenis so they land in the right place.
+     *
+     * Two forms are handled. "#about" is a same-page jump. "/#about" is what
+     * the nav and footer use, because they also render on /experience and the
+     * project pages, where a bare hash finds nothing — it fails silently *and*
+     * pushes a history entry, so the back button then returns you to the page
+     * you were already on and the whole nav feels dead.
+     *
+     * On the home page a "/#id" link is intercepted and scrolled. Anywhere
+     * else it is left alone, so the browser really does navigate home.
+     */
     const onAnchorClick = (event: MouseEvent) => {
+      // Let modified clicks (new tab, download, middle-click) behave normally.
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
       const anchor = (event.target as HTMLElement | null)?.closest?.(
-        'a[href^="#"]',
+        'a[href^="#"], a[href^="/#"]',
       ) as HTMLAnchorElement | null;
       if (!anchor) return;
 
-      const id = anchor.getAttribute("href");
-      if (!id || id === "#") return;
+      const href = anchor.getAttribute("href");
+      if (!href) return;
 
-      const target = document.querySelector(id);
+      const hash = href.startsWith("/#") ? href.slice(1) : href;
+      if (hash === "#") return;
+
+      // Away from home, "/#id" is a genuine navigation — don't swallow it.
+      const onHome = window.location.pathname === "/";
+      if (href.startsWith("/#") && !onHome) return;
+
+      const target = document.querySelector(hash);
       if (!target) return;
 
       event.preventDefault();
       lenis.scrollTo(target as HTMLElement, { offset: -24 });
     };
     document.addEventListener("click", onAnchorClick);
+
+    // Arriving at "/#projects" from another page: the browser's own jump
+    // happens before Lenis exists, so it has to be redone once.
+    let hashFrame = 0;
+    if (window.location.hash.length > 1) {
+      const target = document.querySelector(window.location.hash);
+      if (target) {
+        hashFrame = window.requestAnimationFrame(() => {
+          lenis.scrollTo(target as HTMLElement, {
+            offset: -24,
+            immediate: true,
+          });
+        });
+      }
+    }
 
     const mm = gsap.matchMedia();
 
@@ -83,8 +120,39 @@ export function ScrollProvider() {
           },
         );
 
+        // --- Grid staggers ---
+        // A [data-reveal-group] animates its own children in sequence, so a
+        // row of cards arrives one after another instead of as one block.
+        // Collected first, and skipped by the generic pass below, or each
+        // card would be animated twice and fight itself.
+        const grouped = new Set<HTMLElement>();
+        gsap.utils
+          .toArray<HTMLElement>("[data-reveal-group]")
+          .forEach((group) => {
+            const children = gsap.utils.toArray<HTMLElement>(
+              group.querySelectorAll("[data-reveal='fade']"),
+            );
+            if (children.length === 0) return;
+            children.forEach((child) => grouped.add(child));
+
+            gsap.fromTo(
+              children,
+              { opacity: 0, y: 26 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "power2.out",
+                stagger: 0.08,
+                scrollTrigger: { trigger: group, start: "top 85%", once: true },
+              },
+            );
+          });
+
         // --- Generic scroll reveals ---
-        const reveals = gsap.utils.toArray<HTMLElement>("[data-reveal='fade']");
+        const reveals = gsap.utils
+          .toArray<HTMLElement>("[data-reveal='fade']")
+          .filter((el) => !grouped.has(el));
         reveals.forEach((el) => {
           gsap.fromTo(
             el,
@@ -186,6 +254,7 @@ export function ScrollProvider() {
     ScrollTrigger.refresh();
 
     return () => {
+      if (hashFrame) window.cancelAnimationFrame(hashFrame);
       document.removeEventListener("click", onAnchorClick);
       mm.revert();
       gsap.ticker.remove(raf);

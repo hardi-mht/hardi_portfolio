@@ -1,60 +1,146 @@
+import {
+  Compass,
+  Code2,
+  Layers,
+  Users,
+  Sparkles,
+  Handshake,
+  Lightbulb,
+  Clock,
+  MapPin,
+} from "lucide-react";
 import { profile } from "@/content/profile";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 /**
- * The pinned narrative beat. Markup is written so it reads correctly with no
- * JavaScript at all: three stacked panels in document order. The scroll engine
- * later pins the section and cross-fades between them.
+ * "Who I am" — baseline, career vision, quick facts, illustration.
+ *
+ * Quick facts are statements about how I work, not a second copy of the
+ * contact card. Name, email and phone all live in the contact section and
+ * the footer; the only personal details kept here are experience and
+ * location, which a client weighing a contract wants before anything else.
  */
+const arc = profile.aboutPanels.map((panel) => panel.heading);
+
+const factIcons = {
+  code: Code2,
+  layers: Layers,
+  users: Users,
+  compass: Compass,
+  sparkles: Sparkles,
+  handshake: Handshake,
+} as const;
+
 export function About() {
   return (
-    <section
-      id="about"
-      data-pin-section
-      className="relative gutter py-24 md:py-32"
-    >
+    <section id="about" className="section-shell gutter">
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.18em] text-muted uppercase">
-          <span className="text-accent">01</span>
-          <span aria-hidden className="h-px w-8 bg-border" />
-          <span>About</span>
+        <SectionHeading
+          label="About"
+          title="Who I am."
+          // intro={profile.baseline}
+        />
+
+        {/* The two details worth surfacing early. */}
+        <div className="mt-6 flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-1.5 font-mono text-[0.6875rem] tracking-[0.12em] text-muted uppercase">
+            <Clock aria-hidden className="size-3.5 text-accent" />
+            {profile.yearsExperience} years experience
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-1.5 font-mono text-[0.6875rem] tracking-[0.12em] text-muted uppercase">
+            <MapPin aria-hidden className="size-3.5 text-accent" />
+            {profile.location}
+          </span>
         </div>
 
-        {/* Copy stays in the left lane; the right lane belongs to the 3D
-            workstation, where she stands and turns to face the reader. */}
+        {/* ---------------- Career vision ---------------- */}
         <div
-          data-pin-stage
-          className="mt-10 md:mt-14 md:flex md:min-h-[70svh] md:items-center"
+          data-reveal="fade"
+          className="mt-10 rounded-2xl border border-accent/30 bg-accent/[0.04] p-6 md:p-8"
         >
-          <div className="w-full md:max-w-[48%]">
-            <h2 className="text-display-md font-bold text-balance">
-              Senior engineer,
-              <br />
-              <span className="text-gradient">agentic systems.</span>
-            </h2>
-            <p className="mt-6 text-lead text-muted text-pretty">
-              {profile.summary}
-            </p>
+          <div className="flex items-center gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent/15 text-accent">
+              <Compass aria-hidden className="size-5" />
+            </span>
+            <h3 className="text-lg font-semibold">Career vision</h3>
+          </div>
 
-            <ol data-pin-panels className="mt-10 space-y-5 md:space-y-6">
-              {profile.aboutPanels.map((panel, i) => (
+          <p className="mt-5 leading-relaxed text-muted text-pretty">
+            {profile.careerVision.map((segment, i) =>
+              segment.accent ? (
+                <span key={i} className="font-medium text-accent">
+                  {segment.text}
+                </span>
+              ) : (
+                <span key={i}>{segment.text}</span>
+              ),
+            )}
+          </p>
+        </div>
+
+        {/* ---------------- Quick facts + illustration ---------------- */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.45fr_0.55fr] lg:gap-8">
+          <div className="panel rounded-2xl p-6 md:p-8">
+            <h3 className="flex items-center gap-2.5 text-lg font-semibold">
+              <Lightbulb aria-hidden className="size-5 text-accent" />
+              Quick facts
+            </h3>
+
+            <ul
+              data-reveal-group
+              className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2"
+            >
+              {profile.quickFacts.map((fact) => {
+                const Icon = factIcons[fact.icon];
+                return (
+                  <li
+                    key={fact.text}
+                    data-reveal="fade"
+                    className="flex items-start gap-3"
+                  >
+                    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent/10 text-accent">
+                      <Icon aria-hidden className="size-4" />
+                    </span>
+                    <span className="text-sm leading-relaxed text-muted text-pretty">
+                      {fact.text}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* <ul className="mt-8 space-y-3 border-t border-border pt-6">
+              {arc.map((line) => (
                 <li
-                  key={panel.label}
-                  data-pin-panel={i}
-                  className="glass rounded-2xl p-6 md:p-8"
+                  key={line}
+                  className="flex items-start gap-3 text-sm font-medium"
                 >
-                  <p className="font-mono text-[0.6875rem] tracking-[0.18em] text-accent uppercase">
-                    {panel.label}
-                  </p>
-                  <h3 className="mt-4 text-2xl font-semibold text-balance md:text-3xl">
-                    {panel.heading}
-                  </h3>
-                  <p className="mt-3 font-mono text-sm leading-relaxed text-muted text-pretty">
-                    {panel.body}
-                  </p>
+                  <span
+                    aria-hidden
+                    className="mt-[0.55em] size-1.5 shrink-0 rounded-full bg-accent"
+                  />
+                  {line}
                 </li>
               ))}
-            </ol>
+            </ul> */}
+
+            {/* <a
+              href={profile.resumePath}
+              download
+              className="mt-8 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.16em] uppercase transition-colors hover:border-accent hover:text-accent"
+            >
+              <Download aria-hidden className="size-4" />
+              Download CV..
+            </a> */}
           </div>
+
+          <img
+            src="/about-wave.webp"
+            alt=""
+            aria-hidden
+            loading="lazy"
+            className="mx-auto w-full max-w-xs self-start rounded-2xl lg:max-w-none"
+          />
         </div>
       </div>
     </section>

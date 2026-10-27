@@ -12,6 +12,14 @@ export type Project = {
   stack: string[];
   links: ProjectLink[];
   featured?: boolean;
+  /**
+   * The one-line "technical impact" badge on the card.
+   *
+   * A measured figure where one exists, and a factual restatement of what the
+   * build actually changed where one doesn't — never an invented percentage.
+   * Omit the field entirely and the card omits the badge.
+   */
+  impact?: string;
 };
 
 export const projects: Project[] = [
@@ -31,6 +39,7 @@ export const projects: Project[] = [
       "Used Redis for conversation memory and to keep multi-step tool runs fast under load",
     ],
     stack: ["LLM function-calling", "ReAct", "RAG", "Qdrant", "Node.js", "Redis", "AWS"],
+    impact: "Replaced a fixed pipeline with a ReAct loop that reasons, acts and observes",
     links: [],
     featured: true,
   },
@@ -49,6 +58,7 @@ export const projects: Project[] = [
       "Fronted the whole thing with API Gateway for frontend–backend communication",
     ],
     stack: ["React", "Chakra UI", "AWS Lambda", "S3", "API Gateway", "HTML", "CSS"],
+    impact: "Serverless by design — compute exists only while a report is produced",
     links: [],
   },
   {
@@ -67,6 +77,7 @@ export const projects: Project[] = [
       "Worked with a backend engineer whose pipeline used hybrid rule-based + AI extraction to feed the dashboard",
     ],
     stack: ["Next.js", "TypeScript", "React", "Node.js", "MongoDB"],
+    impact: "Per-member attribution keeps shared household finances legible",
     links: [],
   },
   {
@@ -84,9 +95,8 @@ export const projects: Project[] = [
       "Worked with a backend engineer on the Python screening pipeline — ingestion via the Telegram Bot API, evaluation against role criteria",
     ],
     stack: ["Next.js", "TypeScript", "Python", "MongoDB", "Telegram Bot API"],
+    impact: "Model output surfaced as reviewable evaluations, not raw decisions",
     links: [],
   },
 ];
 
-export const featuredProject = projects.find((p) => p.featured)!;
-export const otherProjects = projects.filter((p) => !p.featured);

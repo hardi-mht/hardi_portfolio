@@ -1,60 +1,104 @@
-import { ArrowUpRight, Download, Mail } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { profile } from "@/content/profile";
-import { CopyEmailButton } from "@/components/ui/CopyEmailButton";
+import { ContactForm } from "@/components/ui/ContactForm";
+
+/**
+ * The contact card from reference 4: details, a form and the illustration
+ * inside one panel.
+ *
+ * The card is dark in both themes, deliberately. The illustration carries a
+ * baked-in purple background, so a card that followed the light palette would
+ * leave it sitting on the page as a cut-out rectangle. Fixing the card to the
+ * illustration's own colours lets the two merge, and the section reads as the
+ * closing statement it is.
+ */
+const details = [
+  {
+    icon: Mail,
+    value: profile.email,
+    href: `mailto:${profile.email}`,
+  },
+  {
+    icon: Phone,
+    value: profile.phone,
+    href: `tel:${profile.phone.replace(/\s/g, "")}`,
+  },
+  { icon: MapPin, value: profile.location },
+];
 
 export function Contact() {
   return (
     <section id="contact" className="section-shell gutter">
       <div className="mx-auto max-w-6xl">
-        <p className="mono-label">
-          <span className="text-accent">07</span>
-          <span aria-hidden className="mx-3 inline-block h-px w-8 align-middle bg-border" />
-          Contact
-        </p>
+        <div
+          className="overflow-hidden rounded-3xl"
+          style={{
+            background:
+              "linear-gradient(135deg, #171034 0%, #231750 45%, #2d1f66 100%)",
+          }}
+        >
+          {/* No right padding on wide screens: the illustration runs to the
+              card's edge, the way it does in the reference, instead of
+              floating in the middle of a column. */}
+          <div className="grid items-center gap-10 p-8 md:p-10 lg:grid-cols-[0.9fr_1.05fr_1fr] lg:gap-8 lg:pr-0">
+            {/* ---------------- Details ---------------- */}
+            <div>
+              {/* The eyebrow is "Contact", not "Let's connect": the heading
+                  already opens with "Let's", and the pair read as a stutter. */}
+              <p className="font-mono text-[0.6875rem] tracking-[0.18em] text-white/55 uppercase">
+                Contact
+              </p>
+              <h2 className="mt-4 text-3xl font-bold text-balance text-white md:text-4xl">
+                Let&rsquo;s work together.
+              </h2>
+              {/* Full-time leads, because word order is what tells a hiring
+                  manager this page is for them too. */}
+              <p className="mt-3 text-white/65 text-pretty">
+                Open to full-time roles, contract and freelance work. Tell me
+                what you need.
+              </p>
 
-        <h2 className="mt-8 text-display-lg font-bold text-balance">
-          Let&rsquo;s build
-          <br />
-          <span className="text-gradient">something real.</span>
-        </h2>
+              <ul className="mt-8 space-y-4">
+                {details.map((detail) => (
+                  <li key={detail.value}>
+                    {detail.href ? (
+                      <a
+                        href={detail.href}
+                        data-cursor="hover"
+                        className="inline-flex items-start gap-3 text-sm text-white/75 transition-colors hover:text-white"
+                      >
+                        <detail.icon
+                          aria-hidden
+                          className="mt-0.5 size-4 shrink-0 text-accent"
+                        />
+                        <span className="break-all">{detail.value}</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-start gap-3 text-sm text-white/75">
+                        <detail.icon
+                          aria-hidden
+                          className="mt-0.5 size-4 shrink-0 text-accent"
+                        />
+                        {detail.value}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        <p className="mt-8 max-w-xl text-lead text-muted text-pretty">
-          Open to senior and staff engineering roles, and to conversations about
-          agentic AI in production. Based in {profile.locationShort}.
-        </p>
+            {/* ---------------- Form ---------------- */}
+            <ContactForm to={profile.email} />
 
-        <div className="mt-12 flex flex-wrap items-center gap-3">
-          <a
-            href={`mailto:${profile.email}`}
-            data-cursor="hover"
-            className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-mono text-xs font-bold tracking-[0.14em] text-on-accent uppercase transition-opacity hover:opacity-90"
-          >
-            <Mail aria-hidden className="size-4" />
-            {profile.email}
-          </a>
-
-          <CopyEmailButton email={profile.email} />
-
-          <a
-            href={profile.resumePath}
-            download
-            data-cursor="hover"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 font-mono text-xs tracking-[0.1em] text-muted uppercase transition-colors hover:border-accent/50 hover:text-accent"
-          >
-            <Download aria-hidden className="size-3.5" />
-            Download CV
-          </a>
-
-          <a
-            href={profile.linkedin}
-            target="_blank"
-            rel="noreferrer noopener"
-            data-cursor="hover"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 font-mono text-xs tracking-[0.1em] text-muted uppercase transition-colors hover:border-accent/50 hover:text-accent"
-          >
-            LinkedIn
-            <ArrowUpRight aria-hidden className="size-3.5" />
-          </a>
+            {/* ---------------- Illustration ---------------- */}
+            <img
+              src="/contact-point.webp"
+              alt=""
+              aria-hidden
+              loading="lazy"
+              className="hidden w-full lg:block"
+            />
+          </div>
         </div>
       </div>
     </section>

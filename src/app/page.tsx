@@ -1,13 +1,18 @@
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
+import { Services } from "@/components/sections/Services";
 import { Experience } from "@/components/sections/Experience";
-import { Clara } from "@/components/sections/Clara";
 import { Projects } from "@/components/sections/Projects";
 import { Skills } from "@/components/sections/Skills";
 import { Education } from "@/components/sections/Education";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/layout/Footer";
 
+/**
+ * Section order is the reading order a stranger needs: who, what they can do,
+ * what with, where they've done it, the headline piece, the rest of the work,
+ * then the credentials and the way to get in touch.
+ */
 export default function Home() {
   return (
     <>
@@ -21,10 +26,10 @@ export default function Home() {
       <main>
         <Hero />
         <About />
-        <Experience />
-        <Clara />
-        <Projects />
+        <Services />
         <Skills />
+        <Experience />
+        <Projects />
         <Education />
         <Contact />
       </main>

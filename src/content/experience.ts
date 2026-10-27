@@ -24,14 +24,13 @@ export const experience: Company[] = [
     note: "formerly Coachbar",
     location: "Ahmedabad, India",
     start: "Feb 2024",
-    end: "Present",
+    end: "Sep 2026",
     stack: ["React", "Node.js", "MongoDB", "Redis", "Qdrant", "AWS", "LLM APIs"],
     roles: [
       {
         title: "Senior Software Engineer",
         start: "Feb 2026",
-        end: "Present",
-        current: true,
+        end: "Sep 2026",
         bullets: [
           "Architected the redesign of Clara, AppVentory's in-product AI assistant, from a rigid fixed pipeline into an agentic, tool-calling system (ReAct architecture) using LLM function-calling, RAG (Qdrant), Node.js and Redis",
           "Drove architecture decisions for Clara and contributed technical input across other modules, working closely with the team on system design",

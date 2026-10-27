@@ -1,95 +1,117 @@
+import Link from "next/link";
+import { ArrowUpRight, Calendar, MapPin } from "lucide-react";
 import { experience } from "@/content/experience";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Chip } from "@/components/ui/Chip";
+import { cn } from "@/lib/cn";
 
-/** Inverted (light) section — the colour flip that punctuates the scroll. */
+/**
+ * Centre-line timeline.
+ *
+ * One card per company rather than per role: AppVentory has two roles, and a
+ * card each would break the left/right alternation and imply they were two
+ * separate jobs. Roles nest inside their company's card instead.
+ *
+ * Below `md` the rule moves to the left edge and every card stacks to its
+ * right — alternating columns on a phone leaves each card about 150px wide.
+ */
 export function Experience() {
   return (
-    <section
-      id="experience"
-      className="section-shell gutter bg-inverted text-ink"
-    >
+    <section id="experience" className="section-shell band gutter">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
-          index="02"
           label="Experience"
-          title="Five years, four companies, one throughline."
+          title="Five years, four companies."
           intro="Ownership of core modules, architecture decisions, and the systems other people build on."
-          inverted
         />
 
-        <ol className="mt-16 space-y-14 md:space-y-20">
-          {experience.map((company) => (
-            <li
-              key={company.id}
-              className="grid gap-6 border-t border-inverted-border pt-8 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12"
-            >
-              {/* Sticky company rail */}
-              <div className="md:sticky md:top-28 md:self-start">
-                <h3 className="text-2xl font-bold tracking-tight">
-                  {company.company}
-                </h3>
-                {company.note ? (
-                  <p className="mt-1 font-mono text-xs text-ink-muted">
-                    {company.note}
-                  </p>
-                ) : null}
-                <p className="mt-3 font-mono text-xs tracking-[0.1em] text-ink-muted uppercase">
-                  {company.start} — {company.end}
-                </p>
-                <p className="mt-1 font-mono text-xs text-ink-muted">
-                  {company.location}
-                </p>
+        <div className="relative mt-14">
+          {/* The spine. Left-aligned on small screens, centred from md. */}
+          <span
+            aria-hidden
+            className="absolute inset-y-0 left-[7px] w-px bg-border md:left-1/2 md:-translate-x-1/2"
+          />
 
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {company.stack.map((tech) => (
-                    <Chip key={tech} tone="inverted">
-                      {tech}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
+          <ol className="space-y-8">
+            {experience.map((company, index) => {
+              const onLeft = index % 2 === 0;
+              return (
+                <li
+                  key={company.id}
+                  data-reveal="fade"
+                  className="relative pl-10 md:grid md:grid-cols-2 md:gap-12 md:pl-0"
+                >
+                  {/* Node on the spine. */}
+                  <span
+                    aria-hidden
+                    className="absolute top-7 left-0 size-[15px] rounded-full border-2 border-accent bg-bg md:left-1/2 md:-translate-x-1/2"
+                  />
 
-              {/* Roles */}
-              <div className="space-y-10">
-                {company.roles.map((role) => (
-                  <article key={role.title} data-reveal="fade">
-                    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <h4 className="text-lg font-semibold">{role.title}</h4>
-                      {role.current ? (
-                        <span className="inline-flex items-center gap-1.5 font-mono text-[0.625rem] tracking-[0.14em] text-ink-muted uppercase">
-                          <span
-                            aria-hidden
-                            className="size-1.5 rounded-full bg-accent-ink"
-                          />
-                          Current
-                        </span>
-                      ) : null}
+                  <article
+                    className={cn(
+                      "panel card-hover rounded-2xl p-6",
+                      onLeft
+                        ? "md:col-start-1"
+                        : "md:col-start-2 md:row-start-1",
+                    )}
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-accent/10 px-2.5 py-1 font-mono text-[0.625rem] tracking-[0.1em] text-accent uppercase">
+                        <Calendar aria-hidden className="size-3" />
+                        {company.start} — {company.end}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1 font-mono text-[0.625rem] tracking-[0.1em] text-muted uppercase">
+                        <MapPin aria-hidden className="size-3" />
+                        {company.location}
+                      </span>
                     </div>
-                    <p className="mt-1 font-mono text-xs tracking-[0.1em] text-ink-muted uppercase">
-                      {role.start} — {role.end}
-                    </p>
 
-                    <ul className="mt-4 space-y-3">
-                      {role.bullets.map((bullet) => (
-                        <li
-                          key={bullet}
-                          className="relative pl-6 text-[0.9375rem] leading-relaxed text-ink-muted text-pretty"
+                    <h3 className="mt-4 text-xl font-bold">
+                      {company.company}
+                    </h3>
+                    {company.note ? (
+                      <p className="mt-1 font-mono text-xs text-muted">
+                        {company.note}
+                      </p>
+                    ) : null}
+
+                    <div className="mt-5 space-y-4">
+                      {company.roles.map((role) => (
+                        <div
+                          key={role.title}
+                          className="border-l-2 border-border pl-4"
                         >
-                          <span
-                            aria-hidden
-                            className="absolute top-[0.6875em] left-0 h-px w-3 bg-ink-muted/50"
-                          />
-                          {bullet}
-                        </li>
+                          <div className="flex flex-wrap items-baseline gap-x-3">
+                            <h4 className="font-semibold">{role.title}</h4>
+                            {role.current ? (
+                              <span className="inline-flex items-center gap-1.5 font-mono text-[0.625rem] tracking-[0.14em] text-accent uppercase">
+                                <span
+                                  aria-hidden
+                                  className="size-1.5 rounded-full bg-accent"
+                                />
+                                Current
+                              </span>
+                            ) : null}
+                          </div>
+                          <p className="mt-1.5 text-sm leading-relaxed text-muted text-pretty">
+                            {role.bullets[0]}
+                          </p>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </article>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ol>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        <Link
+          href="/experience"
+          className="mt-12 inline-flex items-center gap-2 rounded-lg border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.16em] uppercase transition-colors hover:border-accent hover:text-accent"
+        >
+          Full history
+          <ArrowUpRight aria-hidden className="size-3.5" />
+        </Link>
       </div>
     </section>
   );

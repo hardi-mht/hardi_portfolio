@@ -1,69 +1,40 @@
 import { cn } from "@/lib/cn";
 
+/**
+ * The heading every section opens with: a small label, a display title and an
+ * optional line of intro.
+ *
+ * It used to carry `index`, `context`, `size` and `inverted` props too. The
+ * numbering was commented out of the markup, and the other three were only
+ * ever passed by the Clara section, which no longer exists — so each was a
+ * branch that could not be reached. Dropping `inverted` is what removed the
+ * inline `style` attributes: with one colour scheme to serve, ordinary
+ * utility classes do the job.
+ */
 type SectionHeadingProps = {
-  index: string;
   label: string;
   title: React.ReactNode;
-  /** Short mono line under the title — used to attribute work to where it happened. */
-  context?: React.ReactNode;
   intro?: React.ReactNode;
-  inverted?: boolean;
   className?: string;
 };
 
 export function SectionHeading({
-  index,
   label,
   title,
-  context,
   intro,
-  inverted = false,
   className,
 }: SectionHeadingProps) {
   return (
     <header className={cn("max-w-3xl", className)}>
-      <div
-        className="flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.18em] uppercase"
-        style={{ color: inverted ? "var(--color-ink-muted)" : "var(--color-muted)" }}
-      >
-        <span className={inverted ? "text-accent-ink" : "text-accent"}>
-          {index}
-        </span>
-        <span
-          aria-hidden
-          className="h-px w-8"
-          style={{
-            backgroundColor: inverted
-              ? "var(--color-inverted-border)"
-              : "var(--color-border)",
-          }}
-        />
+      <div className="flex items-center gap-3 font-mono text-[0.6875rem] tracking-[0.18em] text-muted uppercase">
+        <span aria-hidden className="h-px w-8 bg-border" />
         <span>{label}</span>
       </div>
 
-      <h2
-        className="mt-5 text-display-md font-bold text-balance"
-        style={{ color: inverted ? "var(--color-ink)" : "var(--color-text)" }}
-      >
-        {title}
-      </h2>
-
-      {context ? (
-        <p
-          className="mt-4 font-mono text-sm"
-          style={{ color: inverted ? "var(--color-ink-muted)" : "var(--color-muted)" }}
-        >
-          {context}
-        </p>
-      ) : null}
+      <h2 className="mt-5 text-display-md font-bold text-balance">{title}</h2>
 
       {intro ? (
-        <p
-          className="mt-5 text-lead text-pretty"
-          style={{ color: inverted ? "var(--color-ink-muted)" : "var(--color-muted)" }}
-        >
-          {intro}
-        </p>
+        <p className="mt-5 text-lead text-muted text-pretty">{intro}</p>
       ) : null}
     </header>
   );

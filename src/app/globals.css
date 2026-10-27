@@ -2,15 +2,12 @@
 
 @theme {
   /* ---------------------------------------------------------------------
-     Two palette groups, not two themes.
+     One palette, declared dark and overridden for light further down.
 
-       base      — bg / surface / border / text / muted / accent
-       inverted  — the alternating sections (Experience, Skills) and the text
-                   on them: inverted / inverted-surface / ink / ink-muted
-
-     Switching theme swaps the two groups wholesale, so every section keeps
-     its inversion rhythm and no component needs a light-mode variant.
-     Declared here as dark; overridden further down for light.
+     There used to be a second "inverted" group here, so that alternating
+     sections could flip to the opposite scheme. Nothing alternates any more
+     — depth comes from the surface levels below instead — so those tokens
+     and the components that branched on them have gone.
      --------------------------------------------------------------------- */
   --color-bg: #0a0a0f;
   --color-surface: #14141c;
@@ -22,20 +19,16 @@
   --color-accent-alt: #a78bfa;
   /* Text/icons sitting on a filled accent block. */
   --color-on-accent: #0a0a0f;
-  /* The accent as used on an inverted section. */
-  --color-accent-ink: #0e7490;
-  /* A wash that reads as "slightly lighter/darker than the ink surface". */
+  /* A wash a touch lighter than the surface under it — used for row hovers. */
   --color-overlay: rgb(255 255 255 / 0.05);
-  --color-overlay-border: rgb(255 255 255 / 0.15);
-
-  --color-inverted: #f4f4f5;
-  --color-inverted-surface: #e6e6ea;
-  --color-inverted-border: #cfcfd6;
-  --color-ink: #0a0a0f;
-  --color-ink-muted: #55555f;
 
   /* ---- type ---- */
+  /* Three faces, three jobs. `display` is for headings and the name, `text`
+     carries every paragraph, `mono` does labels, chips and buttons. Space
+     Grotesk used to do the first two; it is a display face, and at 16px
+     across a paragraph its character turns into friction. */
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-text: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
   --text-display-xl: clamp(3.5rem, 13vw, 12rem);
@@ -64,9 +57,7 @@
    Light theme.
 
    Three states: no `data-theme` follows the system, `data-theme="light"` and
-   `data-theme="dark"` are explicit choices. The light values are the dark ones
-   with the base and inverted groups swapped, so alternating sections still
-   alternate — they just start from the other end.
+   `data-theme="dark"` are explicit choices.
 
    Accent values are not mirrored: #22d3ee on #f4f4f5 is 1.9:1, so light mode
    uses cyan-800 / violet-700. Cyan-700 was tried first and failed — at 10%
@@ -89,15 +80,7 @@
     --color-accent: #155e75;
     --color-accent-alt: #6d28d9;
     --color-on-accent: #ffffff;
-    --color-accent-ink: #22d3ee;
     --color-overlay: rgb(0 0 0 / 0.04);
-    --color-overlay-border: rgb(0 0 0 / 0.12);
-
-    --color-inverted: #0a0a0f;
-    --color-inverted-surface: #14141c;
-    --color-inverted-border: #26262f;
-    --color-ink: #f4f4f5;
-    --color-ink-muted: #8b8b96;
   }
 }
 
@@ -113,15 +96,7 @@
   --color-accent: #155e75;
   --color-accent-alt: #6d28d9;
   --color-on-accent: #ffffff;
-  --color-accent-ink: #22d3ee;
   --color-overlay: rgb(0 0 0 / 0.04);
-  --color-overlay-border: rgb(0 0 0 / 0.12);
-
-  --color-inverted: #0a0a0f;
-  --color-inverted-surface: #14141c;
-  --color-inverted-border: #26262f;
-  --color-ink: #f4f4f5;
-  --color-ink-muted: #8b8b96;
 }
 
 @layer base {
@@ -155,10 +130,21 @@
   body {
     background-color: var(--color-bg);
     color: var(--color-text);
-    font-family: var(--font-display);
+    font-family: var(--font-text);
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+  }
+
+  /* Headings opt back into the display face. Anything that wants it without
+     being a heading — a pull quote, a stat — can add `font-display`. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
   }
 
   ::selection {
@@ -192,11 +178,58 @@
     padding-block: clamp(5rem, 12vh, 9rem);
   }
 
-  /* Frosted panel used by cards and the About terminal. */
-  .glass {
-    background-color: color-mix(in oklab, var(--color-surface) 72%, transparent);
-    backdrop-filter: blur(14px);
+  /* ------------------------------------------------------------------
+     Three levels of surface, and no more. Hierarchy comes from which
+     level a thing sits on, so adding a fourth would flatten the other
+     three — which is what a page of identical cards does.
+
+       page   the section background
+       band   a full-bleed step up, for the one section that matters most
+       panel  a bordered block, kept for content that is genuinely a unit
+     ------------------------------------------------------------------ */
+  .band {
+    background-color: var(--color-surface);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .panel {
+    background-color: var(--color-surface);
     border: 1px solid var(--color-border);
+  }
+
+  /* A panel on the band would otherwise be the same colour as the band and
+     read as a bare outline, so it steps up one more level. */
+  .band .panel {
+    background-color: var(--color-surface-2);
+  }
+
+  /* A ruled row: the default for lists. Cheaper than a card and it keeps
+     a column of items reading as one list instead of n separate objects. */
+  .ruled {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* The one hover treatment every card shares, so services, projects, skills
+     and education respond identically instead of each inventing a lift.
+     Transform and border only — no shadow, which reads as grime on the dark
+     palette and costs a repaint on a grid of twenty cards. */
+  .card-hover {
+    transition:
+      transform 200ms var(--ease-out-expo),
+      border-color 200ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+  }
+
+  /* Anyone who asked for less motion keeps the border change and loses the
+     movement — the affordance survives, the animation does not. */
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover:hover {
+      transform: none;
+    }
   }
 
   .mono-label {
